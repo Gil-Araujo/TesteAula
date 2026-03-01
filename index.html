@@ -2,66 +2,71 @@
 <html lang="pt">
   <head>
     <meta charset="utf-8" />
-    <title>Exercício A-Frame - Aula 1 (Grab sem JS)</title>
+    <title>Exercício A-Frame - Aula 1 (Grab)</title>
 
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <!-- Biblioteca para grab/drag (sem escrever JS teu) -->
     <script src="https://unpkg.com/aframe-super-hands-component@5.0.3/dist/aframe-super-hands-component.min.js"></script>
   </head>
 
   <body>
     <a-scene>
+      <!-- ASSETS -->
       <a-assets>
-        <img
-          id="pano"
-          src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
-          crossorigin="anonymous"
-        />
+        <img id="pano" src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg" crossorigin="anonymous" />
         <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
       </a-assets>
 
-      <!-- Skybox -->
+      <!-- SKY -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
 
-      <!-- Luz -->
+      <!-- LUZ -->
       <a-entity light="type: ambient; intensity: 0.7"></a-entity>
       <a-entity light="type: directional; intensity: 1.1" position="2 4 1"></a-entity>
       <a-entity light="type: directional; intensity: 0.5" position="-2 2 -1"></a-entity>
 
-      <!-- Chão -->
+      <!-- CHÃO -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
 
-      <!-- Objetos (agarráveis) -->
-      <a-box class="grabbable" grabbable hoverable position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere class="grabbable" grabbable hoverable position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder class="grabbable" grabbable hoverable position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
+      <!-- OBJETOS (AGARRÁVEIS) -->
+      <a-box class="grabbable" grabbable hoverable
+             position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
 
-      <!-- Coração (agarrável) -->
-      <a-entity
-        id="heart"
+      <a-sphere class="grabbable" grabbable hoverable
+                position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+
+      <a-cylinder class="grabbable" grabbable hoverable
+                  position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
+
+      <!-- CORAÇÃO (AGARRÁVEL) -->
+      <a-entity id="heart"
         class="grabbable"
-        grabbable
-        hoverable
+        grabbable hoverable
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
         position="0 1.2 -2"
         rotation="0 180 0"
         scale="0.10 0.10 0.10"
-        animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear"
-      ></a-entity>
+        animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear">
+      </a-entity>
 
-      <!-- VR controllers -->
-      <a-entity laser-controls="hand: right" raycaster="objects: .grabbable" super-hands></a-entity>
-      <a-entity laser-controls="hand: left" raycaster="objects: .grabbable" super-hands></a-entity>
+      <!-- VR HANDS (Quest controllers) -->
+      <a-entity laser-controls="hand: right"
+                raycaster="objects: .grabbable; far: 30"
+                super-hands></a-entity>
 
-      <!-- Câmara (PC) -->
-      <a-camera position="0 1.6 5" wasd-controls look-controls>
-        <a-cursor rayOrigin="mouse"></a-cursor>
-      </a-camera>
+      <a-entity laser-controls="hand: left"
+                raycaster="objects: .grabbable; far: 30"
+                super-hands></a-entity>
 
-      <!-- “mão” do rato para grab no PC -->
-      <a-entity raycaster="objects: .grabbable" cursor="rayOrigin: mouse" super-hands></a-entity>
+      <!-- PC MOUSE HAND (isto é o que faltava) -->
+      <a-entity cursor="rayOrigin: mouse"
+                raycaster="objects: .grabbable; far: 30"
+                super-hands="grabStartButtons: mousedown; grabEndButtons: mouseup">
+      </a-entity>
+
+      <!-- CÂMARA -->
+      <a-camera position="0 1.6 5" wasd-controls look-controls></a-camera>
     </a-scene>
   </body>
 </html>
