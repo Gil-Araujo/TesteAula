@@ -1,99 +1,113 @@
-# HumanHeart_OBJ.mtl (fixed for A-Frame / three.js)
-# Assumes all textures are in the same folder as this .mtl
+# HumanHeart_OBJ.mtl (MTL-only "nicer" look for A-Frame / three.js)
+# Put this .mtl in the same folder as all textures below.
 
 newmtl HeartHigh20_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 1.00 1.00 1.00
-Ks 0.00 0.00 0.00
+Kd 1.12 1.12 1.12
+Ks 0.02 0.02 0.02
+Ns 12
+Ke 0.06 0.02 0.02
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanOpening__color.png
-bump HumanOpening__normals.png -bm 1
-map_Ks HumanOpening__cavity.png
+bump HumanOpening__normals.png -bm 0.08
 
 
 newmtl HeartHighResInsideCOMPLETE_Zremesh_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 1.00 1.00 1.00
-Ks 0.00 0.00 0.00
+Kd 1.12 1.12 1.12
+Ks 0.02 0.02 0.02
+Ns 12
+Ke 0.06 0.02 0.02
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
-bump HumanBase__normals.png -bm 1
-map_Ks HumanBase__cavity.png
+bump HumanBase__normals.png -bm 0.08
 
 
 newmtl Vains01_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.10 1.10 1.10
+Ks 0.01 0.01 0.01
+Ns 8
+Ke 0.05 0.02 0.02
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl Vains02_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.10 1.10 1.10
+Ks 0.01 0.01 0.01
+Ns 8
+Ke 0.05 0.02 0.02
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl initialShadingGroup
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.80 0.80 0.80
-Ks 0.10 0.10 0.10
+Kd 1.05 1.05 1.05
+Ks 0.01 0.01 0.01
+Ns 6
+Ke 0.03 0.01 0.01
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl pTorus1_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.95 0.95 0.95
-Ks 0.00 0.00 0.00
+Kd 1.05 1.05 1.05
+Ks 0.01 0.01 0.01
+Ns 6
+Ke 0.03 0.01 0.01
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
-bump MitralValve_normals.png -bm 1
-map_Ks MitralValve__cavity.png
+bump MitralValve_normals.png -bm 0.08
 
 
 newmtl pTorus2_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.95 0.95 0.95
-Ks 0.00 0.00 0.00
+Kd 1.05 1.05 1.05
+Ks 0.01 0.01 0.01
+Ns 6
+Ke 0.03 0.01 0.01
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
-bump TricuspidValve_normals.png -bm 1
-map_Ks TricuspidValve__cavity.png
+bump TricuspidValve_normals.png -bm 0.08
 
 
 newmtl polySurface1_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.08 1.08 1.08
+Ks 0.01 0.01 0.01
+Ns 6
+Ke 0.04 0.01 0.01
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl polySurface2_blinnSG
-illum 4
+illum 2
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.08 1.08 1.08
+Ks 0.01 0.01 0.01
+Ns 6
+Ke 0.04 0.01 0.01
 Ni 1.00
-Tf 1.00 1.00 1.00
+d 1.00
 map_Kd HumanBase__color.png
