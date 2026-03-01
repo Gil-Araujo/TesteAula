@@ -2,53 +2,66 @@
 <html lang="pt">
   <head>
     <meta charset="utf-8" />
-    <title>Exercício A-Frame - Aula 1</title>
+    <title>Exercício A-Frame - Aula 1 (Grab sem JS)</title>
+
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- Biblioteca para grab/drag (sem escrever JS teu) -->
+    <script src="https://unpkg.com/aframe-super-hands-component@5.0.3/dist/aframe-super-hands-component.min.js"></script>
   </head>
 
   <body>
     <a-scene>
-
-      <!-- 1) ASSETS (tudo o que carrega antes da cena) -->
       <a-assets>
-        <!-- CONFIRMA O NOME DO FICHEIRO (underscore vs hífen) -->
-        <img id="pano" src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg" crossorigin="anonymous" />
-
+        <img
+          id="pano"
+          src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
+          crossorigin="anonymous"
+        />
         <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
       </a-assets>
 
-      <!-- 2) AMBIENTE 360 -->
+      <!-- Skybox -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
 
-      <!-- 3) LUZ (importante para o OBJ não ficar escuro) -->
-      <a-entity light="type: ambient; intensity: 0.9"></a-entity>
-      <a-entity light="type: directional; intensity: 0.9" position="1 2 1"></a-entity>
+      <!-- Luz -->
+      <a-entity light="type: ambient; intensity: 0.7"></a-entity>
+      <a-entity light="type: directional; intensity: 1.1" position="2 4 1"></a-entity>
+      <a-entity light="type: directional; intensity: 0.5" position="-2 2 -1"></a-entity>
 
-      <!-- 4) CHÃO -->
+      <!-- Chão -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
 
-      <!-- 5) OBJETOS BÁSICOS -->
-      <a-box position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
+      <!-- Objetos (agarráveis) -->
+      <a-box class="grabbable" grabbable hoverable position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-sphere class="grabbable" grabbable hoverable position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+      <a-cylinder class="grabbable" grabbable hoverable position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
 
-      <!-- 6) MODELO 3D (CORAÇÃO) -->
+      <!-- Coração (agarrável) -->
       <a-entity
         id="heart"
+        class="grabbable"
+        grabbable
+        hoverable
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
         position="0 1.2 -2"
         rotation="0 180 0"
         scale="0.10 0.10 0.10"
-        animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear">
-      </a-entity>
+        animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear"
+      ></a-entity>
 
-      <!-- 7) CÂMARA -->
+      <!-- VR controllers -->
+      <a-entity laser-controls="hand: right" raycaster="objects: .grabbable" super-hands></a-entity>
+      <a-entity laser-controls="hand: left" raycaster="objects: .grabbable" super-hands></a-entity>
+
+      <!-- Câmara (PC) -->
       <a-camera position="0 1.6 5" wasd-controls look-controls>
-        <a-cursor></a-cursor>
+        <a-cursor rayOrigin="mouse"></a-cursor>
       </a-camera>
 
+      <!-- “mão” do rato para grab no PC -->
+      <a-entity raycaster="objects: .grabbable" cursor="rayOrigin: mouse" super-hands></a-entity>
     </a-scene>
   </body>
 </html>
