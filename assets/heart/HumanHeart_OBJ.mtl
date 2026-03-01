@@ -1,113 +1,82 @@
-# HumanHeart_OBJ.mtl (MTL-only fix for A-Frame / three.js)
-# Assumes all textures are in the same folder as this .mtl
-
 newmtl HeartHigh20_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.02 0.02 0.02
-Ns 10
+Ks 0.05 0.05 0.05
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanOpening__color.png
-bump HumanOpening__normals.png -bm 0.20
+bump HumanOpening__normals.png -bm 0.6
 
 
 newmtl HeartHighResInsideCOMPLETE_Zremesh_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.02 0.02 0.02
-Ns 10
+Ks 0.05 0.05 0.05
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
-bump HumanBase__normals.png -bm 0.20
+bump HumanBase__normals.png -bm 0.6
 
 
 newmtl Vains01_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
+Ks 0.03 0.03 0.03
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl Vains02_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
+Ks 0.03 0.03 0.03
 Ni 1.00
-d 1.00
-Tf 1.00 1.00 1.00
-map_Kd HumanBase__color.png
-
-
-newmtl initialShadingGroup
-illum 2
-Ka 0.00 0.00 0.00
-Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
-Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl pTorus1_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
+Ks 0.03 0.03 0.03
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
-bump MitralValve_normals.png -bm 0.20
+bump MitralValve_normals.png -bm 0.6
 
 
 newmtl pTorus2_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
+Ks 0.03 0.03 0.03
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
-bump TricuspidValve_normals.png -bm 0.20
+bump TricuspidValve_normals.png -bm 0.6
 
 
 newmtl polySurface1_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
+Ks 0.03 0.03 0.03
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
 
 
 newmtl polySurface2_blinnSG
-illum 2
+illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.01 0.01 0.01
-Ns 5
+Ks 0.03 0.03 0.03
 Ni 1.00
-d 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
