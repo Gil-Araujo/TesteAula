@@ -1,33 +1,54 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="pt">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Exercício A-Frame - Aula 1</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   </head>
+
   <body>
-
-
-
     <a-scene>
-      
-<a-assets>
-  <img id="pano" src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ-CC.jpg">
-</a-assets>
 
-<a-sky src="#pano" rotation="0 -90 0"></a-sky>
+      <!-- 1) ASSETS (tudo o que carrega antes da cena) -->
+      <a-assets>
+        <!-- CONFIRMA O NOME DO FICHEIRO (underscore vs hífen) -->
+        <img id="pano" src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg" crossorigin="anonymous" />
 
-      <!-- Plano de chão -->
+        <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
+        <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
+      </a-assets>
+
+      <!-- 2) AMBIENTE 360 -->
+      <a-sky src="#pano" rotation="0 -90 0"></a-sky>
+
+      <!-- 3) LUZ (importante para o OBJ não ficar escuro) -->
+      <a-entity light="type: ambient; intensity: 0.9"></a-entity>
+      <a-entity light="type: directional; intensity: 0.9" position="1 2 1"></a-entity>
+
+      <!-- 4) CHÃO -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
 
-      <!-- Objectos geométricos -->
+      <!-- 5) OBJETOS BÁSICOS -->
       <a-box position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
       <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
       <a-cylinder position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
 
-      <!-- Câmara com controlos padrão -->
-      <a-camera wasd-controls look-controls position="0 1.6 5"></a-camera>
+      <!-- 6) MODELO 3D (CORAÇÃO) -->
+      <a-entity
+        id="heart"
+        obj-model="obj: #heart-obj; mtl: #heart-mtl"
+        material="side: double"
+        position="0 1.2 -2"
+        rotation="0 180 0"
+        scale="0.10 0.10 0.10"
+        animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear">
+      </a-entity>
+
+      <!-- 7) CÂMARA -->
+      <a-camera position="0 1.6 5" wasd-controls look-controls>
+        <a-cursor></a-cursor>
+      </a-camera>
+
     </a-scene>
   </body>
 </html>
