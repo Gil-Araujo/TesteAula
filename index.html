@@ -2,15 +2,8 @@
 <html lang="pt">
   <head>
     <meta charset="utf-8" />
-    <title>A-Frame (Drag no PC + Grab no VR)</title>
-
+    <title>Exercício A-Frame - Aula 1</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-
-    <!-- Super Hands -->
-    <script src="https://unpkg.com/aframe-super-hands-component@5.0.3/dist/aframe-super-hands-component.min.js"></script>
-
-    <!-- Event-set (para feedback visual sem JS teu) -->
-    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
   </head>
 
   <body>
@@ -33,32 +26,14 @@
       <!-- CHÃO -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
 
-      <!-- OBJETOS (interativos) -->
-      <a-box class="interactable"
-        hoverable draggable grabbable
-        event-set__enter="_event: hover-start; color: #FFFFFF"
-        event-set__leave="_event: hover-end; color: #4CC3D9"
-        position="-3 1 -4" rotation="0 45 0" color="#4CC3D9">
-      </a-box>
-
-      <a-sphere class="interactable"
-        hoverable draggable grabbable
-        event-set__enter="_event: hover-start; color: #FFFFFF"
-        event-set__leave="_event: hover-end; color: #EF2D5E"
-        position="0 1.25 -5" radius="1.25" color="#EF2D5E">
-      </a-sphere>
-
-      <a-cylinder class="interactable"
-        hoverable draggable grabbable
-        event-set__enter="_event: hover-start; color: #FFFFFF"
-        event-set__leave="_event: hover-end; color: #FFC65D"
-        position="3 1 -3" radius="0.5" height="2" color="#FFC65D">
-      </a-cylinder>
+      <!-- FORMAS -->
+      <a-box position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+      <a-cylinder position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
 
       <!-- CORAÇÃO -->
-      <a-entity id="heart"
-        class="interactable"
-        hoverable draggable grabbable
+      <a-entity
+        id="heart"
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
         position="0 1.2 -2"
@@ -67,37 +42,8 @@
         animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear">
       </a-entity>
 
-      <!-- VR HANDS (Quest) -->
-      <a-entity laser-controls="hand: right"
-        raycaster="objects: .interactable; far: 30"
-        super-hands="colliderEvent: raycaster-intersection;
-                     colliderEventProperty: els;
-                     colliderEndEvent: raycaster-intersection-cleared;
-                     colliderEndEventProperty: clearedEls">
-      </a-entity>
-
-      <a-entity laser-controls="hand: left"
-        raycaster="objects: .interactable; far: 30"
-        super-hands="colliderEvent: raycaster-intersection;
-                     colliderEventProperty: els;
-                     colliderEndEvent: raycaster-intersection-cleared;
-                     colliderEndEventProperty: clearedEls">
-      </a-entity>
-
-      <!-- CÂMARA + MÃO DO RATO (PC) -->
-      <a-camera position="0 1.6 5" wasd-controls look-controls>
-        <a-entity
-          cursor="rayOrigin: mouse"
-          raycaster="objects: .interactable; far: 30"
-          super-hands="colliderEvent: raycaster-intersection;
-                       colliderEventProperty: els;
-                       colliderEndEvent: raycaster-intersection-cleared;
-                       colliderEndEventProperty: clearedEls;
-                       dragDropStartButtons: mousedown;
-                       dragDropEndButtons: mouseup">
-        </a-entity>
-      </a-camera>
-
+      <!-- CÂMARA -->
+      <a-camera position="0 1.6 5" wasd-controls look-controls></a-camera>
     </a-scene>
   </body>
 </html>
