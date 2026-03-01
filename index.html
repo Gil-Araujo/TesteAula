@@ -12,7 +12,11 @@
     <a-scene>
       <!-- ASSETS -->
       <a-assets>
-        <img id="pano" src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg" crossorigin="anonymous" />
+        <img
+          id="pano"
+          src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
+          crossorigin="anonymous"
+        />
         <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
       </a-assets>
@@ -50,23 +54,38 @@
         animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear">
       </a-entity>
 
-      <!-- VR HANDS (Quest controllers) -->
+      <!-- VR HANDS (Quest controllers) - com configuração para raycaster -->
       <a-entity laser-controls="hand: right"
-                raycaster="objects: .grabbable; far: 30"
-                super-hands></a-entity>
+        raycaster="objects: .grabbable; far: 30"
+        super-hands="colliderEvent: raycaster-intersection;
+                     colliderEventProperty: els;
+                     colliderEndEvent: raycaster-intersection-cleared;
+                     colliderEndEventProperty: clearedEls">
+      </a-entity>
 
       <a-entity laser-controls="hand: left"
-                raycaster="objects: .grabbable; far: 30"
-                super-hands></a-entity>
-
-      <!-- PC MOUSE HAND (isto é o que faltava) -->
-      <a-entity cursor="rayOrigin: mouse"
-                raycaster="objects: .grabbable; far: 30"
-                super-hands="grabStartButtons: mousedown; grabEndButtons: mouseup">
+        raycaster="objects: .grabbable; far: 30"
+        super-hands="colliderEvent: raycaster-intersection;
+                     colliderEventProperty: els;
+                     colliderEndEvent: raycaster-intersection-cleared;
+                     colliderEndEventProperty: clearedEls">
       </a-entity>
 
       <!-- CÂMARA -->
-      <a-camera position="0 1.6 5" wasd-controls look-controls></a-camera>
+      <a-camera position="0 1.6 5" wasd-controls look-controls>
+        <!-- PC MOUSE HAND (dentro da câmara) -->
+        <a-entity
+          cursor="rayOrigin: mouse"
+          raycaster="objects: .grabbable; far: 30"
+          super-hands="colliderEvent: raycaster-intersection;
+                       colliderEventProperty: els;
+                       colliderEndEvent: raycaster-intersection-cleared;
+                       colliderEndEventProperty: clearedEls;
+                       grabStartButtons: mousedown;
+                       grabEndButtons: mouseup">
+        </a-entity>
+      </a-camera>
+
     </a-scene>
   </body>
 </html>
