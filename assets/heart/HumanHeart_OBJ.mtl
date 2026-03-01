@@ -1,35 +1,30 @@
-# HumanHeart_OBJ.mtl (fixed for A-Frame / three.js)
-# Assumes all textures are in the same folder as this .mtl
-
 newmtl HeartHigh20_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.00 0.00 0.00
+Ks 0.05 0.05 0.05
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanOpening__color.png
-bump HumanOpening__normals.png -bm 1
-map_Ks HumanOpening__cavity.png
+bump HumanOpening__normals.png -bm 0.6
 
 
 newmtl HeartHighResInsideCOMPLETE_Zremesh_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
 Kd 1.00 1.00 1.00
-Ks 0.00 0.00 0.00
+Ks 0.05 0.05 0.05
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
-bump HumanBase__normals.png -bm 1
-map_Ks HumanBase__cavity.png
+bump HumanBase__normals.png -bm 0.6
 
 
 newmtl Vains01_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.00 1.00 1.00
+Ks 0.03 0.03 0.03
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
@@ -38,18 +33,8 @@ map_Kd HumanBase__color.png
 newmtl Vains02_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
-Ni 1.00
-Tf 1.00 1.00 1.00
-map_Kd HumanBase__color.png
-
-
-newmtl initialShadingGroup
-illum 4
-Ka 0.00 0.00 0.00
-Kd 0.80 0.80 0.80
-Ks 0.10 0.10 0.10
+Kd 1.00 1.00 1.00
+Ks 0.03 0.03 0.03
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
@@ -58,32 +43,30 @@ map_Kd HumanBase__color.png
 newmtl pTorus1_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
-Kd 0.95 0.95 0.95
-Ks 0.00 0.00 0.00
+Kd 1.00 1.00 1.00
+Ks 0.03 0.03 0.03
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
-bump MitralValve_normals.png -bm 1
-map_Ks MitralValve__cavity.png
+bump MitralValve_normals.png -bm 0.6
 
 
 newmtl pTorus2_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
-Kd 0.95 0.95 0.95
-Ks 0.00 0.00 0.00
+Kd 1.00 1.00 1.00
+Ks 0.03 0.03 0.03
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
-bump TricuspidValve_normals.png -bm 1
-map_Ks TricuspidValve__cavity.png
+bump TricuspidValve_normals.png -bm 0.6
 
 
 newmtl polySurface1_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.00 1.00 1.00
+Ks 0.03 0.03 0.03
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
@@ -92,8 +75,8 @@ map_Kd HumanBase__color.png
 newmtl polySurface2_blinnSG
 illum 4
 Ka 0.00 0.00 0.00
-Kd 0.90 0.90 0.90
-Ks 0.20 0.20 0.20
+Kd 1.00 1.00 1.00
+Ks 0.03 0.03 0.03
 Ni 1.00
 Tf 1.00 1.00 1.00
 map_Kd HumanBase__color.png
