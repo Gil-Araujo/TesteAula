@@ -2,13 +2,56 @@
 <html lang="pt">
   <head>
     <meta charset="utf-8" />
-    <title>Exercício A-Frame - Aula 1</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <title>Aula VR - Medicina</title>
+    <!-- A-Frame: biblioteca para criar cenas 3D/VR no browser -->
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <!-- Event-Set: permite criar interações (hover, click) sem JavaScript -->
+    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+    <style>
+      /* Overlay: caixa semi-transparente com instruções, visível por cima da cena */
+      #overlay {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.75);
+        color: white;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        max-width: 340px;
+        line-height: 1.5;
+        pointer-events: none; /* não bloqueia cliques na cena */
+      }
+      #overlay h3 { margin: 0 0 8px 0; font-size: 16px; }
+      #overlay ul { margin: 0; padding-left: 18px; }
+      #overlay li { margin-bottom: 4px; }
+    </style>
   </head>
 
   <body>
+    <!-- ================================================ -->
+    <!--   OVERLAY HTML — instruções visíveis no ecrã     -->
+    <!-- ================================================ -->
+    <div id="overlay">
+      <h3>Instruções</h3>
+      <ul>
+        <li><b>Mover:</b> W A S D &nbsp;|&nbsp; <b>Olhar:</b> arrastar rato</li>
+        <li><b>Interagir:</b> aponta o retículo + clica (PC) ou espera 1.5 s (VR)</li>
+        <li>Cubo azul &rarr; hover muda cor · click muda cor da esfera</li>
+        <li>Esfera rosa &rarr; click mostra mensagem</li>
+        <li>Cilindro amarelo &rarr; click move o cilindro</li>
+        <li>Coração &rarr; aponta para ver "Heart"</li>
+      </ul>
+    </div>
+
+    <!-- ================================================ -->
+    <!--                 CENA A-FRAME                     -->
+    <!-- ================================================ -->
     <a-scene>
-      <!-- ASSETS -->
+
+      <!-- ASSETS: ficheiros pré-carregados antes da cena arrancar -->
       <a-assets>
         <img
           id="pano"
@@ -19,7 +62,7 @@
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
       </a-assets>
 
-      <!-- SKY -->
+      <!-- SKY: imagem panorâmica 360° como fundo -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
 
       <!-- LUZ -->
@@ -36,31 +79,146 @@
         color="#7BC8A4"
       ></a-plane>
 
-      <!-- FORMAS -->
-      <a-box position="-3 1 -4" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder position="3 1 -3" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
+      <!-- ============================================== -->
+      <!--            OBJETOS INTERATIVOS                 -->
+      <!-- ============================================== -->
 
-      <!-- CORAÇÃO -->
+      <!--
+        CUBO AZUL
+        - Hover (mouseenter): muda a SUA cor para ciano
+        - Hover (mouseleave): volta à cor original
+        - Click: muda a cor da ESFERA para roxo (_target remoto)
+      -->
+      <a-box
+        class="clickable"
+        position="-3 1 -4"
+        rotation="0 45 0"
+        color="#4CC3D9"
+        event-set__enter="_event: mouseenter; material.color: #00FFFF"
+        event-set__leave="_event: mouseleave; material.color: #4CC3D9"
+        event-set__click="_event: click; _target: #esfera; material.color: #9B59B6"
+      ></a-box>
+
+      <!--
+        ESFERA ROSA
+        - Hover: muda a SUA cor (rosa mais claro)
+        - Click: mostra o texto flutuante (#info-text)
+        - animation__pulse: escala sobe e desce continuamente
+      -->
+      <a-sphere
+        id="esfera"
+        class="clickable"
+        position="0 1.25 -5"
+        radius="1.25"
+        color="#EF2D5E"
+        event-set__enter="_event: mouseenter; material.color: #FF5588"
+        event-set__leave="_event: mouseleave; material.color: #EF2D5E"
+        event-set__show="_event: click; _target: #info-text; visible: true"
+        animation__pulse="property: scale; from: 1 1 1; to: 1.08 1.08 1.08;
+                          dir: alternate; dur: 1200; loop: true;
+                          easing: easeInOutSine"
+      ></a-sphere>
+
+      <!--
+        TEXTO FLUTUANTE (escondido por defeito)
+        - Aparece quando se clica na esfera
+        - Clica-se no próprio texto para o esconder
+        - geometry: plano de fundo semi-transparente
+      -->
+      <a-entity
+        id="info-text"
+        class="clickable"
+        position="0 3.5 -5"
+        visible="false"
+        geometry="primitive: plane; width: 4.5; height: 0.8"
+        material="color: #000000; opacity: 0.6; shader: flat"
+        text="value: Bem-vindos a VR Medicina!; align: center;
+              color: #FFFFFF; width: 5"
+        event-set__hide="_event: click; visible: false"
+      ></a-entity>
+
+      <!--
+        CILINDRO AMARELO
+        - Hover: muda a SUA cor (amarelo mais claro)
+        - Click: desloca-se suavemente para nova posição (animação)
+      -->
+      <a-cylinder
+        id="cilindro"
+        class="clickable"
+        position="3 1 -3"
+        radius="0.5"
+        height="2"
+        color="#FFC65D"
+        event-set__enter="_event: mouseenter; material.color: #FFE44D"
+        event-set__leave="_event: mouseleave; material.color: #FFC65D"
+        animation__jump="property: position; to: 3 3 -5;
+                         dur: 800; startEvents: click;
+                         easing: easeOutBack"
+      ></a-cylinder>
+
+      <!-- ============================================== -->
+      <!--          CORAÇÃO 3D  +  LABEL "Heart"          -->
+      <!-- ============================================== -->
+
+      <!--
+        LABEL "Heart" — escondido por defeito.
+        Controlado pelo hover no coração (event-set lá em baixo).
+      -->
+      <a-entity
+        id="heart-label"
+        text="value: Heart; align: center; color: #FFFFFF; width: 4"
+        position="0 2.5 -2"
+        visible="false"
+      ></a-entity>
+
+      <!--
+        CORAÇÃO 3D
+        - Rotação contínua suave (animation)
+        - Hover (mouseenter): mostra o label "Heart"
+        - Hover (mouseleave): esconde o label "Heart"
+      -->
       <a-entity
         id="heart"
+        class="clickable"
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
         position="0 1.2 -2"
         rotation="0 180 0"
         scale="0.10 0.10 0.10"
-        animation="property: rotation; to: 0 540 0; loop: true; dur: 12000; easing: linear"
+        animation="property: rotation; to: 0 540 0;
+                   loop: true; dur: 12000; easing: linear"
+        event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
+        event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-entity>
 
-      <!-- CÂMARA + CÍRCULO (retículo) COMO ANTES -->
+      <!-- ============================================== -->
+      <!--        CÂMARA  +  RETÍCULO (cursor gaze)       -->
+      <!-- ============================================== -->
+      <!--
+        cursor
+          fuse: true      → em VR, olhar para um objeto 1.5 s dispara "click"
+          fuseTimeout: 1500 → tempo confortável para iniciantes
+        raycaster
+          objects: .clickable → só detecta entidades com class="clickable"
+        Animações do retículo:
+          fusing     → o anel encolhe enquanto conta (feedback visual)
+          mouseleave → o anel volta ao tamanho normal
+      -->
       <a-camera position="0 1.6 5" wasd-controls look-controls>
-        <a-cursor
-          rayOrigin="entity"
-          cursor="fuse: false"
-          geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015"
-          material="color: white; shader: flat"
-        ></a-cursor>
+        <a-entity
+          cursor="fuse: true; fuseTimeout: 1500"
+          raycaster="objects: .clickable"
+          position="0 0 -1"
+          geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+          material="color: #FFFFFF; shader: flat; transparent: true; opacity: 0.8"
+          animation__fusing="property: scale; from: 1 1 1; to: 0.5 0.5 0.5;
+                             dur: 1500; startEvents: fusing;
+                             easing: easeInCubic"
+          animation__reset="property: scale; to: 1 1 1;
+                            dur: 200; startEvents: mouseleave"
+        ></a-entity>
       </a-camera>
+
     </a-scene>
   </body>
 </html>
