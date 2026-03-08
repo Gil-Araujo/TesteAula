@@ -382,32 +382,46 @@ E **substituir** o `<a-box>` que já existe por estes 3 objetos:
 >
 > "Em VR, não temos rato. O retículo serve para 'apontar' olhando. Olhamos para um objeto + esperamos = click."
 >
-> "Vamos preparar a câmara para o próximo passo."
+> "Também precisamos que funcione o **movimento nos óculos VR**. No PC usamos WASD, mas em VR usamos o **thumbstick** (joystick) dos controladores. Para isso, vamos carregar outra biblioteca: **aframe-extras**, que trata de tudo automaticamente."
+>
+> "Em vez de uma câmara simples, usamos um padrão chamado **camera rig** — uma entidade-pai que se move, com a câmara dentro. Pensem como um carro: o carro (rig) move-se, e nós (câmara) estamos sentados lá dentro a olhar à volta."
 
 ## O que os alunos escrevem
 
-Adicionar **ANTES** de `</a-scene>` (última coisa dentro da cena):
+**1)** No `<head>`, adicionar esta linha **DEPOIS** do script do A-Frame:
 
 ```html
-      <!-- CÂMARA: os nossos "olhos" no mundo 3D -->
-      <a-camera position="0 1.6 5" wasd-controls look-controls>
-        <!-- RETÍCULO: o círculo/ponteiro no centro do ecrã -->
-        <a-entity
-          cursor="fuse: true; fuseTimeout: 1500"
-          raycaster="objects: .clickable"
-          position="0 0 -1"
-          geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
-          material="color: #FFFFFF; shader: flat; transparent: true; opacity: 0.8"
-        ></a-entity>
-      </a-camera>
+    <!-- Extras: movimento com thumbstick dos controladores VR -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.6.0/dist/aframe-extras.min.js"></script>
+```
+
+**2)** Adicionar **ANTES** de `</a-scene>` (última coisa dentro da cena):
+
+```html
+      <!-- RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->
+      <a-entity id="rig" movement-controls="fly: false" position="0 0 5">
+        <!-- CÂMARA: os nossos "olhos" no mundo 3D -->
+        <a-entity camera look-controls position="0 1.6 0">
+          <!-- RETÍCULO: o círculo/ponteiro no centro do ecrã -->
+          <a-entity
+            cursor="fuse: true; fuseTimeout: 1500"
+            raycaster="objects: .clickable"
+            position="0 0 -1"
+            geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+            material="color: #FFFFFF; shader: flat; transparent: true; opacity: 0.8"
+          ></a-entity>
+        </a-entity>
+      </a-entity>
 ```
 
 ## Explicação
 
 | Código | O que faz |
 |--------|-----------|
-| `<a-camera position="0 1.6 5">` | Posiciona a câmara: centro (X=0), altura dos olhos 1.6 m (Y=1.6), e 5 metros "atrás" (Z=5) para ver os objetos que estão em Z negativo. |
-| `wasd-controls` | Permite mover com as teclas W, A, S, D. |
+| `<script src="...aframe-extras...">` | Carrega a biblioteca **aframe-extras** que inclui o componente `movement-controls`. Sem isto, o thumbstick dos controladores VR não funciona. |
+| `<a-entity id="rig" movement-controls="fly: false">` | O **rig** (plataforma): entidade-pai que trata do movimento. `fly: false` impede voar — ficamos sempre no chão. No PC usa WASD, em VR usa o thumbstick automaticamente. |
+| `position="0 0 5"` | Posição inicial do rig: 5 metros "atrás" (Z=5) para ver os objetos à frente. |
+| `<a-entity camera look-controls position="0 1.6 0">` | A câmara dentro do rig. `position="0 1.6 0"` = altura dos olhos (1.6 m acima do rig). |
 | `look-controls` | Permite olhar à volta arrastando o rato (PC) ou mexendo a cabeça (VR). |
 | `cursor="fuse: true; fuseTimeout: 1500"` | **fuse = fusível/temporizador.** Em VR sem rato, se ficarmos a olhar para um objeto durante 1500 ms (1.5 segundos), conta como um "click". Em PC, podemos clicar normalmente com o rato. |
 | `raycaster="objects: .clickable"` | O raycaster é um **raio invisível** que sai do retículo em linha reta. Só detecta objetos que tenham `class="clickable"`. Isto é um filtro — evita clicar no chão ou no céu por acidente. |
@@ -415,8 +429,8 @@ Adicionar **ANTES** de `</a-scene>` (última coisa dentro da cena):
 | `geometry="primitive: ring; ..."` | A forma visual do retículo: um anel (ring). `radiusInner` = buraco interior, `radiusOuter` = tamanho exterior. |
 | `material="color: #FFFFFF; shader: flat; ..."` | Branco, sem iluminação (`shader: flat`), semi-transparente (`opacity: 0.8`). |
 
-> **Conceito-chave — Dentro da câmara:**
-> O retículo está **dentro** da `<a-camera>`. Tudo o que está dentro da câmara move-se com ela — como uns óculos: para onde olham, o retículo vai junto.
+> **Conceito-chave — Camera Rig (plataforma):**
+> O retículo está dentro da **câmara**, que está dentro do **rig**. Quando o rig se move (WASD ou thumbstick), a câmara e o retículo movem-se juntos — como andar dentro de um carro. Quando rodamos a cabeça, só a câmara roda (olhamos à volta dentro do carro).
 
 > **Conceito-chave — class="clickable":**
 > O `raycaster` só vê objetos com `class="clickable"`. Nos próximos passos vamos adicionar esta classe aos objetos que queremos interativos.
@@ -524,7 +538,7 @@ Adicionar **ANTES** de `</a-scene>` (última coisa dentro da cena):
         height="2"
         color="#FFC65D"
         event-set__enter="_event: mouseenter; material.color: #FFE44D"
-        event-set__leave="_event: mouseleave; material.color: #FFC65D"
+        event-set__leave="_event: mouseleave; material.color: #28b69e"
         animation__jump="property: position; to: 2.5 3 -6;
                          dur: 800; startEvents: click;
                          easing: easeOutBack"
@@ -779,7 +793,7 @@ Substituir o bloco do coração inteiro por:
     <div id="overlay">
       <h3>Instruções</h3>
       <ul>
-        <li><b>Mover:</b> W A S D | <b>Olhar:</b> arrastar rato</li>
+        <li><b>Mover:</b> W A S D (PC) | thumbstick (VR) | <b>Olhar:</b> arrastar rato</li>
         <li><b>Interagir:</b> aponta + clica (PC) ou espera 1.5s (VR)</li>
         <li>Cubo azul: hover muda cor, click muda a esfera</li>
         <li>Esfera rosa: click mostra mensagem</li>
@@ -831,7 +845,11 @@ Substituir o bloco do coração inteiro por:
    - Abrir o browser (Meta Browser)
    - Escrever na barra: `http://192.168.1.42:5500` (substituir pelo vosso IP)
 
-3. **Testar todas as interações com gaze:**
+3. **Testar o movimento com thumbstick:**
+   - Usar o thumbstick do controlador para andar pela cena ✓
+   - Confirmar que ficamos no chão (não voamos) ✓
+
+4. **Testar todas as interações com gaze:**
    - Olhar para o cubo → cor muda (hover) ✓
    - Olhar para o cubo e esperar 1.5s → esfera muda de cor (click via fuse) ✓
    - Olhar para a esfera e esperar → texto aparece ✓
@@ -842,6 +860,7 @@ Substituir o bloco do coração inteiro por:
 
 - [ ] A cena carrega no Quest
 - [ ] O retículo é visível
+- [ ] Conseguimos mover com o thumbstick do controlador
 - [ ] Pelo menos 3 interações funcionam com gaze
 
 ## Erros comuns
