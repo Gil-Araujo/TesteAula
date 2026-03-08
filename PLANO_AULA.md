@@ -14,7 +14,7 @@
 ## ANTES DA AULA — Setup (formador prepara)
 
 1. Cada PC deve ter o **VS Code** instalado + extensão **Live Server**
-2. Copiar a pasta do projeto para cada PC (com a imagem panorâmica e a pasta `assets/heart/`)
+2. Copiar a pasta do projeto para cada PC (com a pasta `assets/` que contém: imagem panorâmica em `assets/images/`, coração em `assets/heart/`, e som em `assets/audio/`)
 3. Confirmar que há Wi-Fi partilhado entre PCs e os Quest
 4. Ter o resultado final aberto no seu PC para demonstração
 
@@ -161,7 +161,9 @@ Substituir **TODO** o conteúdo do ficheiro por:
 
 > "Um mundo VR sem céu parece um estúdio vazio. Vamos adicionar uma imagem panorâmica 360° como fundo. É como estar dentro de uma esfera gigante com uma foto colada por dentro."
 >
-> "Para carregar ficheiros pesados (imagens, modelos 3D), A-Frame usa um sistema de **assets** — um 'armazém' que pré-carrega tudo antes de mostrar a cena. Assim não há coisas a aparecer aos bocadinhos."
+> "Para carregar ficheiros pesados (imagens, modelos 3D, sons), A-Frame usa um sistema de **assets** — um 'armazém' que pré-carrega tudo antes de mostrar a cena. Assim não há coisas a aparecer aos bocadinhos."
+>
+> "Além do céu, vamos também adicionar um som ambiente que toca em loop — dá mais imersão à cena."
 
 ## O que os alunos escrevem
 
@@ -172,13 +174,20 @@ Adicionar dentro de `<a-scene>`, **ANTES** do `<a-box>`:
       <a-assets>
         <img
           id="pano"
-          src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
+          src="assets/images/2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
           crossorigin="anonymous"
         />
+        <!-- SOM: ficheiro de áudio para ambiente de fundo -->
+        <audio id="som-ambiente" src="assets/audio/Som.mp3" preload="auto"></audio>
       </a-assets>
 
       <!-- SKY: esfera gigante com a imagem panorâmica por dentro -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
+
+      <!-- SOM AMBIENTE: áudio de fundo que toca em loop, volume a 50% -->
+      <a-entity
+        sound="src: #som-ambiente; autoplay: true; loop: true; volume: 0.5"
+      ></a-entity>
 ```
 
 ## Explicação
@@ -188,9 +197,11 @@ Adicionar dentro de `<a-scene>`, **ANTES** do `<a-box>`:
 | `<a-assets>` | Abre o "armazém". Tudo aqui dentro é pré-carregado. |
 | `<img id="pano" src="..." />` | Carrega a imagem panorâmica. O `id="pano"` é um nome que damos para a usar mais tarde. O `src` é o caminho do ficheiro. |
 | `crossorigin="anonymous"` | Permissão técnica necessária para imagens carregadas pelo A-Frame. Sem isto, pode dar erro. |
+| `<audio id="som-ambiente" src="..." preload="auto">` | Pré-carrega o ficheiro de som. `preload="auto"` diz ao browser para carregar o ficheiro todo antes de usar. |
 | `</a-assets>` | Fecha o armazém. |
 | `<a-sky src="#pano">` | Cria uma esfera gigante à volta de tudo. O `src="#pano"` diz "usa a imagem com id pano". O `#` antes do nome é obrigatório — é assim que se referencia um asset. |
 | `rotation="0 -90 0"` | Roda o céu -90° no eixo Y para ajustar a orientação da imagem. |
+| `sound="src: #som-ambiente; ..."` | Associa o som à entidade. `autoplay: true` = começa a tocar sozinho. `loop: true` = repete infinitamente. `volume: 0.5` = 50% do volume (não demasiado alto). |
 
 > **Conceito-chave — id e referência com #:**
 > Quando damos `id="pano"` a uma coisa, podemos usar `#pano` noutro sítio para dizer "aquela coisa". É como um nome próprio — único no documento.
@@ -204,13 +215,16 @@ Adicionar dentro de `<a-scene>`, **ANTES** do `<a-box>`:
 
 - [ ] O fundo é uma imagem panorâmica (paisagem 360°)
 - [ ] O cubo azul continua visível
+- [ ] Ouve-se o som ambiente após clicar na cena (ou entrar em VR)
 
 ## Erros comuns
 
 | Problema | Solução |
 |----------|---------|
-| Fundo cinzento (sem imagem) | Verificar que o ficheiro `.jpg` está na mesma pasta que o `index.html`. O nome tem de ser exatamente igual (maiúsculas/minúsculas contam). |
+| Fundo cinzento (sem imagem) | Verificar que o ficheiro `.jpg` está na pasta `assets/images/`. O nome tem de ser exatamente igual (maiúsculas/minúsculas contam). |
 | Demora muito a carregar | A imagem é grande. Esperar 5-10 segundos. |
+| Som não toca automaticamente | Os browsers bloqueiam autoplay até o utilizador interagir com a página (clicar ou tocar). Basta clicar uma vez na cena. Em VR, o som começa ao entrar no modo imersivo. |
+| Som não toca (404) | Verificar que o ficheiro `Som.mp3` está na pasta `assets/audio/`. |
 
 ---
 
@@ -405,7 +419,7 @@ E **substituir** o `<a-box>` que já existe por estes 3 objetos:
           <!-- RETÍCULO: o círculo/ponteiro no centro do ecrã -->
           <a-entity
             cursor="fuse: true; fuseTimeout: 1500"
-            raycaster="objects: .clickable"
+            raycaster="objects: .clickable; interval: 100"
             position="0 0 -1"
             geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
             material="color: #FFFFFF; shader: flat; transparent: true; opacity: 0.8"
@@ -424,7 +438,7 @@ E **substituir** o `<a-box>` que já existe por estes 3 objetos:
 | `<a-entity camera look-controls position="0 1.6 0">` | A câmara dentro do rig. `position="0 1.6 0"` = altura dos olhos (1.6 m acima do rig). |
 | `look-controls` | Permite olhar à volta arrastando o rato (PC) ou mexendo a cabeça (VR). |
 | `cursor="fuse: true; fuseTimeout: 1500"` | **fuse = fusível/temporizador.** Em VR sem rato, se ficarmos a olhar para um objeto durante 1500 ms (1.5 segundos), conta como um "click". Em PC, podemos clicar normalmente com o rato. |
-| `raycaster="objects: .clickable"` | O raycaster é um **raio invisível** que sai do retículo em linha reta. Só detecta objetos que tenham `class="clickable"`. Isto é um filtro — evita clicar no chão ou no céu por acidente. |
+| `raycaster="objects: .clickable; interval: 100"` | O raycaster é um **raio invisível** que sai do retículo em linha reta. Só detecta objetos que tenham `class="clickable"`. `interval: 100` faz a verificação a cada 100 ms em vez de a cada frame — melhora muito o desempenho em VR sem afetar a experiência. |
 | `position="0 0 -1"` | Posição do retículo: à frente da câmara (Z=-1 = 1 metro à frente dos olhos). |
 | `geometry="primitive: ring; ..."` | A forma visual do retículo: um anel (ring). `radiusInner` = buraco interior, `radiusOuter` = tamanho exterior. |
 | `material="color: #FFFFFF; shader: flat; ..."` | Branco, sem iluminação (`shader: flat`), semi-transparente (`opacity: 0.8`). |
@@ -490,6 +504,8 @@ E **substituir** o `<a-box>` que já existe por estes 3 objetos:
         event-set__enter="_event: mouseenter; material.color: #00FFFF"
         event-set__leave="_event: mouseleave; material.color: #4CC3D9"
         event-set__click="_event: click; _target: #esfera; material.color: #9B59B6"
+        animation="property: rotation; to: 0 390 0;
+                   loop: true; dur: 8000; easing: linear"
       ></a-box>
 ```
 
@@ -658,7 +674,7 @@ animation__jump="property: position; to: 2.5 3 -6;
 Substituir o bloco do coração inteiro por:
 
 ```html
-      <!-- CORAÇÃO 3D — roda + mostra label ao hover -->
+      <!-- CORAÇÃO 3D — roda + pulsa + mostra label ao hover -->
       <a-entity
         id="heart"
         class="clickable"
@@ -669,6 +685,9 @@ Substituir o bloco do coração inteiro por:
         scale="0.12 0.12 0.12"
         animation="property: rotation; to: 0 540 0;
                    loop: true; dur: 12000; easing: linear"
+        animation__pulse="property: scale; from: 0.12 0.12 0.12; to: 0.13 0.13 0.13;
+                          dir: alternate; dur: 800; loop: true;
+                          easing: easeInOutSine"
         event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
         event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-entity>
@@ -700,25 +719,34 @@ Substituir o bloco do coração inteiro por:
 
 ---
 
-# PASSO 9 — Animação extra: pulso na esfera + fusing no retículo (10 min)
+# PASSO 9 — Animações extra: rotação no cubo, pulso no coração, fusing no retículo (10 min)
 
 ## O que o formador diz
 
 > "Vamos adicionar mais animações para tornar a cena mais viva."
 >
-> "A esfera vai ter um efeito de 'pulso' — como se estivesse a respirar. E o retículo vai encolher quando estamos a 'apontar' para um objeto (feedback visual do fuse)."
+> "O cubo vai rodar continuamente — já vimos rotação no coração, agora aplicamos ao cubo. O coração vai ter um efeito de 'pulso' — como um batimento cardíaco real. E o retículo vai encolher quando estamos a 'apontar' para um objeto (feedback visual do fuse)."
+>
+> "Reparem que o coração já tem uma animação de rotação (`animation=`). Agora adicionamos uma segunda animação (`animation__pulse=`). Podemos ter várias animações no mesmo objeto — basta usar nomes diferentes depois do `__`."
 
 ## O que os alunos escrevem
 
-**1)** No `<a-sphere>`, adicionar esta linha (novo atributo, DEPOIS do `event-set__show`):
+**1)** No `<a-box>`, adicionar esta linha (novo atributo, DEPOIS do `event-set__click`):
 
 ```
-        animation__pulse="property: scale; from: 1 1 1; to: 1.08 1.08 1.08;
-                          dir: alternate; dur: 1200; loop: true;
+        animation="property: rotation; to: 0 390 0;
+                   loop: true; dur: 8000; easing: linear"
+```
+
+**2)** No `<a-entity id="heart" ...>`, adicionar esta linha (DEPOIS do `animation=` que já existe):
+
+```
+        animation__pulse="property: scale; from: 0.12 0.12 0.12; to: 0.13 0.13 0.13;
+                          dir: alternate; dur: 800; loop: true;
                           easing: easeInOutSine"
 ```
 
-**2)** No retículo (o `<a-entity>` dentro da `<a-camera>`), adicionar estas 2 animações:
+**3)** No retículo (o `<a-entity>` dentro da câmara), adicionar estas 2 animações:
 
 ```
           animation__fusing="property: scale; from: 1 1 1; to: 0.5 0.5 0.5;
@@ -732,20 +760,24 @@ Substituir o bloco do coração inteiro por:
 
 | Código | O que faz |
 |--------|-----------|
-| `animation__pulse` | Segunda animação na esfera (a primeira seria se houvesse). O `__pulse` é o nome. |
-| `from: 1 1 1; to: 1.08 1.08 1.08` | A escala vai de 100% a 108% — cresce 8%. |
-| `dir: alternate` | **Alternado**: vai de 1 a 1.08, depois volta de 1.08 a 1, e repete. Efeito de "respiração". |
+| `animation="property: rotation; to: 0 390 0; ..."` | O cubo roda no eixo Y (sentido horário), uma volta completa em 8 segundos. |
+| `animation__pulse` | Segunda animação no coração (`__pulse` é o nome). A primeira (`animation=`) é a rotação. |
+| `from: 0.12 0.12 0.12; to: 0.13 0.13 0.13` | A escala vai de 0.12 a 0.13 — cresce ~8%. Como o coração já tem `scale="0.12 0.12 0.12"`, usamos esses valores. |
+| `dir: alternate` | **Alternado**: cresce e encolhe, cresce e encolhe... Efeito de "batimento cardíaco". |
+| `dur: 800` | Cada batimento demora 800ms — ritmo próximo de um coração real. |
 | `animation__fusing` | Quando o fuse começa a contar (`startEvents: fusing`), o retículo encolhe de 1 para 0.5 em 1.5 s. Feedback visual: "estou a contar..." |
 | `animation__reset` | Quando o retículo sai do objeto (`startEvents: mouseleave`), volta ao tamanho normal rapidamente (200 ms). |
 
 ## Guardar e ver
 
-- Ctrl+S → A esfera "pulsa" suavemente
+- Ctrl+S → O cubo roda no sentido horário
+- O coração pulsa suavemente (como um batimento)
 - Apontar para um objeto → o retículo encolhe lentamente → sai → volta ao normal
 
 ## Checkpoint ✓
 
-- [ ] A esfera expande e contrai suavemente (pulso)
+- [ ] O cubo roda continuamente no sentido horário
+- [ ] O coração pulsa suavemente (como um batimento cardíaco)
 - [ ] O retículo encolhe quando aponto para um objeto clickable
 
 ---

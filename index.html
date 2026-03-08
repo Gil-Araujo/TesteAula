@@ -53,15 +53,22 @@
       <a-assets>
         <img
           id="pano"
-          src="2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
+          src="assets/images/2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
           crossorigin="anonymous"
         />
         <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
+        <!-- SOM: ficheiro de áudio para ambiente de fundo -->
+        <audio id="som-ambiente" src="assets/audio/Som.mp3" preload="auto"></audio>
       </a-assets>
 
       <!-- SKY: esfera gigante com a imagem panorâmica por dentro -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
+
+      <!-- SOM AMBIENTE: áudio de fundo que toca em loop, volume a 50% -->
+      <a-entity
+        sound="src: #som-ambiente; autoplay: true; loop: true; volume: 0.5"
+      ></a-entity>
 
       <!-- LUZ: sem luz, os objetos ficam "planos" e sem sombra -->
       <a-entity light="type: ambient; intensity: 0.7"></a-entity>
@@ -87,6 +94,8 @@
         event-set__enter="_event: mouseenter; material.color: #00FFFF"
         event-set__leave="_event: mouseleave; material.color: #4CC3D9"
         event-set__click="_event: click; _target: #esfera; material.color: #9B59B6"
+        animation="property: rotation; to: 0 390 0;
+                   loop: true; dur: 8000; easing: linear"
       ></a-box>
 
       <!-- ESFERA: hover muda cor, click mostra o texto flutuante -->
@@ -99,9 +108,6 @@
         event-set__enter="_event: mouseenter; material.color: #FFFF00"
         event-set__leave="_event: mouseleave; material.color: #EF2D5E"
         event-set__show="_event: click; _target: #info-text; visible: true"
-        animation__pulse="property: scale; from: 1 1 1; to: 1.08 1.08 1.08;
-                          dir: alternate; dur: 1200; loop: true;
-                          easing: easeInOutSine"
       ></a-sphere>
 
       <!-- TEXTO FLUTUANTE — escondido, aparece ao clicar na esfera -->
@@ -151,6 +157,9 @@
         scale="0.12 0.12 0.12"
         animation="property: rotation; to: 0 540 0;
                    loop: true; dur: 12000; easing: linear"
+        animation__pulse="property: scale; from: 0.12 0.12 0.12; to: 0.13 0.13 0.13;
+                          dir: alternate; dur: 800; loop: true;
+                          easing: easeInOutSine"
         event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
         event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-entity>
@@ -162,7 +171,7 @@
           <!-- RETÍCULO: o círculo/ponteiro no centro do ecrã -->
           <a-entity
             cursor="fuse: true; fuseTimeout: 1500"
-            raycaster="objects: .clickable"
+            raycaster="objects: .clickable; interval: 100"
             position="0 0 -1"
             geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
             material="color: #FFFFFF; shader: flat; transparent: true; opacity: 0.8"
