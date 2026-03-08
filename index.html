@@ -146,10 +146,26 @@
         visible="false"
       ></a-entity>
 
-      <!-- CORAÇÃO 3D — roda + mostra label ao hover -->
+      <!--
+        HITBOX INVISÍVEL: o modelo do coração tem milhares de triângulos.
+        Se o raycaster tiver de testar cada triângulo, o desempenho cai muito
+        em VR (frame rate baixo). Solução: colocamos uma esfera simples
+        invisível (6 triângulos) à volta do coração. O raycaster testa a
+        esfera (rápido) em vez do modelo complexo (lento).
+        Os eventos de hover (mouseenter/mouseleave) ficam na hitbox.
+      -->
+      <a-sphere
+        class="clickable"
+        position="0 1.5 -3"
+        radius="0.9"
+        material="opacity: 0; transparent: true"
+        event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
+        event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
+      ></a-sphere>
+
+      <!-- CORAÇÃO 3D — apenas visual, roda + pulsa (a hitbox acima trata da interação) -->
       <a-entity
         id="heart"
-        class="clickable"
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
         position="0 1.5 -3"
@@ -160,8 +176,6 @@
         animation__pulse="property: scale; from: 0.12 0.12 0.12; to: 0.13 0.13 0.13;
                           dir: alternate; dur: 800; loop: true;
                           easing: easeInOutSine"
-        event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
-        event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-entity>
 
       <!-- RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->

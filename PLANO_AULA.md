@@ -669,15 +669,22 @@ animation__jump="property: position; to: 2.5 3 -6;
       ></a-entity>
 ```
 
-**2)** No `<a-entity id="heart" ...>`, adicionar estas 2 linhas e `class="clickable"`:
-
-Substituir o bloco do coração inteiro por:
+**2)** Substituir o bloco do coração inteiro por este código (com hitbox invisível):
 
 ```html
-      <!-- CORAÇÃO 3D — roda + pulsa + mostra label ao hover -->
+      <!-- HITBOX: esfera invisível à volta do coração (barata para o raycaster) -->
+      <a-sphere
+        class="clickable"
+        position="0 1.5 -3"
+        radius="0.9"
+        material="opacity: 0; transparent: true"
+        event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
+        event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
+      ></a-sphere>
+
+      <!-- CORAÇÃO 3D — roda + pulsa (sem class clickable, a hitbox trata disso) -->
       <a-entity
         id="heart"
-        class="clickable"
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
         position="0 1.5 -3"
@@ -688,8 +695,6 @@ Substituir o bloco do coração inteiro por:
         animation__pulse="property: scale; from: 0.12 0.12 0.12; to: 0.13 0.13 0.13;
                           dir: alternate; dur: 800; loop: true;
                           easing: easeInOutSine"
-        event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
-        event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-entity>
 ```
 
@@ -701,8 +706,10 @@ Substituir o bloco do coração inteiro por:
 | `text="value: Heart; align: center; color: #FFFFFF; width: 4"` | Texto 3D com a palavra "Heart", centrado, branco, 4 metros de largura máxima. |
 | `position="0 2.8 -3"` | Posicionado acima do coração (Y=2.8, mesmo X e Z). |
 | `visible="false"` | **Começa escondido.** Só aparece quando algo o torna `visible: true`. |
-| `event-set__enter="... _target: #heart-label; visible: true"` | Quando o retículo **entra** no coração → mostra o label. |
-| `event-set__leave="... _target: #heart-label; visible: false"` | Quando o retículo **sai** do coração → esconde o label. |
+| `<a-sphere class="clickable" ...>` | **Hitbox invisível**: uma esfera simples (6 triângulos) que o raycaster testa em vez do coração complexo (milhares de triângulos). Isto evita quebras de frame rate em VR. |
+| `material="opacity: 0; transparent: true"` | Torna a esfera completamente invisível — o utilizador só vê o coração 3D. |
+| `event-set__enter/leave` na hitbox | Os eventos de hover estão na hitbox (não no coração), porque é ela que tem `class="clickable"`. |
+| Coração **sem** `class="clickable"` | O coração já não é alvo do raycaster — apenas visual. Assim o raycaster nunca precisa de testar o modelo OBJ complexo. |
 
 > **Padrão reutilizável para medicina:**
 > Podem duplicar este padrão para qualquer órgão: criar um label escondido + event-set no órgão que o mostra/esconde. É um sistema de "tooltips 3D".
