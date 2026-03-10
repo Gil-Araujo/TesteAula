@@ -10,7 +10,7 @@
     <!-- Extras: movimento com thumbstick dos controladores VR -->
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.6.0/dist/aframe-extras.min.js"></script>
     <style>
-      /* CSS: define a aparência da caixa de instruções */
+      /* CSS: define a aparência da caixa de instruções (PASSO 10) */
       #overlay {
         position: fixed;       /* fica fixa no ecrã, não se move com scroll */
         top: 10px;             /* a 10 pixels do topo */
@@ -33,23 +33,11 @@
   </head>
 
   <body>
-    <!-- OVERLAY: caixa de instruções visível no ecrã -->
-    <div id="overlay">
-      <h3>Instruções</h3>
-      <ul>
-        <li><b>Mover:</b> W A S D (PC) | thumbstick (VR) | <b>Olhar:</b> arrastar rato</li>
-        <li><b>Interagir:</b> aponta + clica (PC) ou espera 1.5s (VR)</li>
-        <li>Cubo azul: hover muda cor, click muda a esfera</li>
-        <li>Esfera rosa: click mostra mensagem</li>
-        <li>Cilindro amarelo: click move</li>
-        <li>Coração: aponta para ver "Heart"</li>
-      </ul>
-    </div>
 
-    <!-- a-scene: o "palco" 3D onde tudo acontece -->
+    <!-- PASSO 2 — a-scene: o "palco" 3D onde tudo acontece -->
     <a-scene>
 
-      <!-- ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
+      <!-- PASSO 3 — ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
       <a-assets>
         <img
           id="pano"
@@ -58,24 +46,25 @@
         />
         <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
-        <!-- SOM: ficheiro de áudio para ambiente de fundo -->
         <audio id="som-ambiente" src="assets/audio/Som.mp3" preload="auto"></audio>
+        <video id="vid" src="assets/videos/MDS_2025_22_10_2025.mp4"
+               loop="true" crossorigin="anonymous"></video>
       </a-assets>
 
-      <!-- SKY: esfera gigante com a imagem panorâmica por dentro -->
+      <!-- PASSO 3 — SKY: esfera gigante com a imagem panorâmica por dentro -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
 
-      <!-- SOM AMBIENTE: áudio de fundo que toca em loop, volume a 50% -->
+      <!-- PASSO 3 — SOM ESPACIAL: se nos afastarmos, o som fica mais baixo -->
       <a-entity
         sound="src: #som-ambiente; autoplay: true; loop: true; volume: 0.5"
       ></a-entity>
 
-      <!-- LUZ: sem luz, os objetos ficam "planos" e sem sombra -->
+      <!-- PASSO 4 — LUZ: sem luz, os objetos ficam "planos" e sem sombra -->
       <a-entity light="type: ambient; intensity: 0.7"></a-entity>
       <a-entity light="type: directional; intensity: 1.1" position="2 4 1"></a-entity>
       <a-entity light="type: directional; intensity: 0.5" position="-2 2 -1"></a-entity>
 
-      <!-- CHÃO: um plano grande e verde -->
+      <!-- PASSO 4 — CHÃO: um plano grande e verde -->
       <a-plane
         position="0 0 0"
         rotation="-90 0 0"
@@ -84,10 +73,44 @@
         color="#7BC8A4"
       ></a-plane>
 
-      <!-- CUBO: hover muda a SUA cor, click muda a cor da ESFERA -->
+      <!-- VIDEO: ecrã no fundo da sala, virado para o aluno -->
+      <a-video
+        id="video-screen"
+        class="clickable"
+        src="#vid"
+        position="0 2.5 9"
+        rotation="0 180 0"
+        width="8"
+        height="4.5"
+      ></a-video>
+      <!-- Label "Clique para Play / Pause" -->
+      <a-entity
+        id="video-label"
+        text="value: Clique para Play; align: center; color: #FFFFFF; width: 6"
+        position="0 5.2 9"
+        rotation="0 180 0"
+        geometry="primitive: plane; width: 3.5; height: 0.7"
+        material="color: #333333; opacity: 0.75; shader: flat"
+      ></a-entity>
+      <!-- Inline script: toggle play/pause ao clicar no ecrã -->
+      <script>
+        document.querySelector('#video-screen').addEventListener('click', function () {
+          var v = document.querySelector('#vid');
+          var label = document.querySelector('#video-label');
+          if (v.paused) {
+            v.play();
+            label.setAttribute('text', 'value', 'Clique para Pause');
+          } else {
+            v.pause();
+            label.setAttribute('text', 'value', 'Clique para Play');
+          }
+        });
+      </script>
+
+      <!-- PASSO 5 — CUBO: hover muda a SUA cor, click muda a cor da ESFERA -->
       <a-box
         class="clickable"
-        position="-4 0.7 -5"
+        position="-6 0.7 -6"
         rotation="0 30 0"
         width="1.2" height="1.2" depth="1.2"
         color="#4CC3D9"
@@ -98,11 +121,11 @@
                    loop: true; dur: 8000; easing: linear"
       ></a-box>
 
-      <!-- ESFERA: hover muda cor, click mostra o texto flutuante -->
+      <!-- PASSO 6 — ESFERA: hover muda cor, click mostra o texto flutuante -->
       <a-sphere
         id="esfera"
         class="clickable"
-        position="3.5 1.5 -5"
+        position="-8 1.5 -2"
         radius="1.25"
         color="#EF2D5E"
         event-set__enter="_event: mouseenter; material.color: #FFFF00"
@@ -110,11 +133,11 @@
         event-set__show="_event: click; _target: #info-text; visible: true"
       ></a-sphere>
 
-      <!-- TEXTO FLUTUANTE — escondido, aparece ao clicar na esfera -->
+      <!-- PASSO 6 — TEXTO FLUTUANTE: escondido, aparece ao clicar na esfera -->
       <a-entity
         id="info-text"
         class="clickable"
-        position="3.5 3.5 -5"
+        position="-8 3.5 -2"
         visible="false"
         geometry="primitive: plane; width: 4.5; height: 0.8"
         material="color: #000000; opacity: 0.6; shader: flat"
@@ -123,52 +146,87 @@
         event-set__hide="_event: click; visible: false"
       ></a-entity>
 
-      <!-- CILINDRO: hover muda cor, click move para nova posição -->
+      <!-- PASSO 7 — CILINDRO: hover muda cor, click move para nova posição -->
       <a-cylinder
         id="cilindro"
         class="clickable"
-        position="-2 1 -7"
+        position="-6 1 3"
         radius="0.5"
         height="2"
         color="#FFC65D"
         event-set__enter="_event: mouseenter; material.color: #FFE44D"
         event-set__leave="_event: mouseleave; material.color: #FFC65D"
-        animation__jump="property: position; to: -2 3 -9;
+        animation__jump="property: position; to: -6 3 5;
                          dur: 800; startEvents: click;
                          easing: easeOutBack"
       ></a-cylinder>
 
-      <!-- LABEL "Heart" — aparece ao apontar para o coração -->
+      <!-- PASSO 7 — CONE: roda continuamente -->
+      <a-cone
+        class="clickable"
+        position="6 1 -6"
+        radius-bottom="0.6"
+        radius-top="0"
+        height="1.5"
+        color="#2ECC71"
+        event-set__enter="_event: mouseenter; material.color: #27AE60"
+        event-set__leave="_event: mouseleave; material.color: #2ECC71"
+        animation="property: rotation; to: 0 360 0;
+                   loop: true; dur: 6000; easing: linear"
+      ></a-cone>
+
+      <!-- PASSO 7 — TORUS: anel que roda em dois eixos ao mesmo tempo -->
+      <a-torus
+        class="clickable"
+        position="8 1.5 -2"
+        radius="0.7"
+        radius-tubular="0.1"
+        color="#8E44AD"
+        event-set__enter="_event: mouseenter; material.color: #9B59B6"
+        event-set__leave="_event: mouseleave; material.color: #8E44AD"
+        animation="property: rotation; from: 0 0 0; to: 360 360 0;
+                   loop: true; dur: 10000; easing: linear"
+      ></a-torus>
+
+      <!-- PASSO 7 — DODECAEDRO: duas animações em simultâneo (spin + bounce) -->
+      <a-dodecahedron
+        class="clickable"
+        position="6 1.2 3"
+        radius="0.6"
+        color="#E74C3C"
+        event-set__enter="_event: mouseenter; material.color: #C0392B"
+        event-set__leave="_event: mouseleave; material.color: #E74C3C"
+        animation__spin="property: rotation; to: 360 360 0;
+                         loop: true; dur: 15000; easing: linear"
+        animation__bounce="property: position; from: 6 1.2 3; to: 6 2 3;
+                           dir: alternate; dur: 2000; loop: true;
+                           easing: easeInOutQuad"
+      ></a-dodecahedron>
+
+      <!-- PASSO 8 — LABEL "Heart": aparece ao apontar para o coração -->
       <a-entity
         id="heart-label"
         text="value: Heart; align: center; color: #FFFFFF; width: 4"
-        position="0 2.8 -3"
+        position="0 2.8 -2"
         visible="false"
       ></a-entity>
 
-      <!--
-        HITBOX INVISÍVEL: o modelo do coração tem milhares de triângulos.
-        Se o raycaster tiver de testar cada triângulo, o desempenho cai muito
-        em VR (frame rate baixo). Solução: colocamos uma esfera simples
-        invisível (6 triângulos) à volta do coração. O raycaster testa a
-        esfera (rápido) em vez do modelo complexo (lento).
-        Os eventos de hover (mouseenter/mouseleave) ficam na hitbox.
-      -->
+      <!-- PASSO 8 — HITBOX INVISÍVEL: esfera simples para otimização VR -->
       <a-sphere
         class="clickable"
-        position="0 1.5 -3"
+        position="0 1.5 -2"
         radius="0.9"
         material="opacity: 0; transparent: true"
         event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
         event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-sphere>
 
-      <!-- CORAÇÃO 3D — apenas visual, roda + pulsa (a hitbox acima trata da interação) -->
+      <!-- PASSO 8 — CORAÇÃO 3D: modelo OBJ, roda + pulsa (hitbox trata da interação) -->
       <a-entity
         id="heart"
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
-        position="0 1.5 -3"
+        position="0 1.5 -2"
         rotation="0 180 0"
         scale="0.12 0.12 0.12"
         animation="property: rotation; to: 0 540 0;
@@ -178,8 +236,8 @@
                           easing: easeInOutSine"
       ></a-entity>
 
-      <!-- RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->
-      <a-entity id="rig" movement-controls="fly: false" position="0 0 5">
+      <!-- PASSO 9 — RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->
+      <a-entity id="rig" movement-controls="fly: false" position="0 0 0">
         <!-- CÂMARA: os nossos "olhos" no mundo 3D -->
         <a-entity camera look-controls position="0 1.6 0">
           <!-- RETÍCULO: o círculo/ponteiro no centro do ecrã -->
@@ -199,5 +257,21 @@
       </a-entity>
 
     </a-scene>
+
+    <!-- PASSO 10 — OVERLAY: caixa de instruções visível no ecrã -->
+    <div id="overlay">
+      <h3>Instruções</h3>
+      <ul>
+        <li><b>Mover:</b> W A S D (PC) | thumbstick (VR) | <b>Olhar:</b> arrastar rato</li>
+        <li><b>Interagir:</b> aponta + clica (PC) ou espera 1.5s (VR)</li>
+      </ul>
+      <h3>Zonas</h3>
+      <ul>
+        <li><b>Frente:</b> Modelos Médicos (coração 3D)</li>
+        <li><b>Esquerda:</b> Clique para Interagir (cubo, esfera, cilindro)</li>
+        <li><b>Direita:</b> Passe o Mouse / Olhe (cone, torus, dodecaedro)</li>
+      </ul>
+    </div>
+
   </body>
 </html>
