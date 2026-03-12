@@ -49,7 +49,8 @@
          physics: ativa gravidade (0.5 = ressalta 50%) -->
     <!-- id="" a TODOS os objetos! Sem id, aparecem como "a-entity" genérico
          no Inspector (Ctrl+Alt+I) e não se consegue distinguir. -->
-    <a-scene physics="gravity: -9.8; restitution: 0.5">
+    <a-scene physics="gravity: -9.8; restitution: 0.5"
+             renderer="antialias: true; pixelRatio: window.devicePixelRatio">
 
       <!-- ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
       <a-assets>
