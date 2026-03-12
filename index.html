@@ -9,6 +9,17 @@
     <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
     <!-- Extras: movimento com thumbstick dos controladores VR -->
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.6.0/dist/aframe-extras.min.js"></script>
+    <!-- Physics (Cannon.js): adiciona GRAVIDADE e COLISÕES reais.
+         COMO USAR:
+         - physics= gravidade na <a-scene>
+         - static-body no chão (sólido, não se move)
+         - dynamic-body="mass: 1" em QUALQUER objeto para ele cair!
+         EXERCÍCIO: adiciona dynamic-body a outros objetos! -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.4/dist/aframe-physics-system.min.js"></script>
+    <!-- Gaussian Splatting: renderiza ficheiros .ply capturados com fotogrametria 3DGS.
+         Cada "splat" é uma nuvem de pontos 3D com cor e transparência,
+         que juntos formam uma cena foto-realista. -->
+    <script src="https://quadjr.github.io/aframe-gaussian-splatting/index.js"></script>
     <style>
       /* CSS: define a aparência da caixa de instruções (PASSO 10) */
       #overlay {
@@ -34,38 +45,55 @@
 
   <body>
 
-    <!-- PASSO 2 — a-scene: o "palco" 3D onde tudo acontece -->
-    <a-scene>
+    <!-- a-scene: o "palco" 3D
+         physics: ativa gravidade (0.5 = ressalta 50%) -->
+    <!-- id="" a TODOS os objetos! Sem id, aparecem como "a-entity" genérico
+         no Inspector (Ctrl+Alt+I) e não se consegue distinguir. -->
+    <a-scene physics="gravity: -9.8; restitution: 0.5">
 
-      <!-- PASSO 3 — ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
+      <!-- ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
       <a-assets>
         <img
           id="pano"
           src="assets/images/2019_07_05_Armazones_Inside_Crater_Pano_24mm_EQ_CC.jpg"
           crossorigin="anonymous"
         />
+        <!-- OBJ = a FORMA 3D (vértices, faces, geometria) — como o esqueleto do modelo.
+             MTL = os MATERIAIS (cores, texturas, brilho) — como a pele/pintura do modelo.
+             Precisamos dos dois: OBJ sem MTL = forma branca sem cor.
+             MTL sem OBJ = nada, porque não há forma para pintar. -->
         <a-asset-item id="heart-obj" src="assets/heart/HumanHeart_OBJ.obj"></a-asset-item>
         <a-asset-item id="heart-mtl" src="assets/heart/HumanHeart_OBJ.mtl"></a-asset-item>
-        <audio id="som-ambiente" src="assets/audio/Som.mp3" preload="auto"></audio>
+        <audio id="som-espacial" src="assets/audio/Som.mp3" preload="auto"></audio>
         <video id="vid" src="assets/videos/MDS_2025_22_10_2025.mp4"
                loop="true" crossorigin="anonymous"></video>
       </a-assets>
 
-      <!-- PASSO 3 — SKY: esfera gigante com a imagem panorâmica por dentro -->
+      <!-- Céu: esfera gigante com a imagem panorâmica por dentro -->
       <a-sky src="#pano" rotation="0 -90 0"></a-sky>
 
-      <!-- PASSO 3 — SOM ESPACIAL: se nos afastarmos, o som fica mais baixo -->
+      <!-- SOM: estamos a usar som AMBIENTE (ouve-se igual em todo o lado).
+           Tipos de som em VR/3D:
+             AMBIENTE  — música de fundo, sem direção. positional: false (ouve-se igual em todo o lado)
+             ESPACIAL  — som 3D posicional. positional: true (default). Vem de um ponto no espaço,
+                         diminui com a distância, ouve-se mais forte no ouvido mais perto (ex: pássaro numa árvore)
+             STEREO    — som em 2 canais (esquerdo/direito), sem posição 3D. Usado em música, narração.
+           Neste caso usamos som ESPACIAL, experimentem andar pela cena e notar a diferença de volume e direção. -->
       <a-entity
-        sound="src: #som-ambiente; autoplay: true; loop: true; volume: 0.5"
+        id="som"
+        position="0 2 0"
+        sound="src: #som-espacial; autoplay: true; loop: true; volume: 0.5; positional: true"
       ></a-entity>
 
-      <!-- PASSO 4 — LUZ: sem luz, os objetos ficam "planos" e sem sombra -->
-      <a-entity light="type: ambient; intensity: 0.7"></a-entity>
-      <a-entity light="type: directional; intensity: 1.1" position="2 4 1"></a-entity>
-      <a-entity light="type: directional; intensity: 0.5" position="-2 2 -1"></a-entity>
+      <!-- LUZ: sem luz, os objetos ficam "planos" e sem sombra -->
+      <a-entity id="luz-ambiente" light="type: ambient; intensity: 0.7"></a-entity>
+      <a-entity id="luz-principal" light="type: directional; intensity: 1.1" position="2 4 1"></a-entity>
+      <a-entity id="luz-secundaria" light="type: directional; intensity: 0.5" position="-2 2 -1"></a-entity>
 
-      <!-- PASSO 4 — CHÃO: um plano grande e verde -->
+      <!-- CHÃO: static-body = sólido, objetos com gravidade param aqui -->
       <a-plane
+        id="chao"
+        static-body
         position="0 0 0"
         rotation="-90 0 0"
         width="20"
@@ -83,16 +111,19 @@
         width="8"
         height="4.5"
       ></a-video>
-      <!-- Label "Clique para Play / Pause" -->
+
+      <!-- Label "Clique para Play / Pause"
+           side: double = visível dos dois lados. Sem isto, o texto desaparece se visto por trás. -->
       <a-entity
         id="video-label"
         text="value: Clique para Play; align: center; color: #FFFFFF; width: 6"
         position="0 5.2 9"
         rotation="0 180 0"
         geometry="primitive: plane; width: 3.5; height: 0.7"
-        material="color: #333333; opacity: 0.75; shader: flat"
+        material="color: #333333; opacity: 0.75; shader: flat; side: double"
       ></a-entity>
-      <!-- Inline script: toggle play/pause ao clicar no ecrã -->
+
+      <!-- Inline script: toggle play/pause ao clicar no ecrã (javascript) -->
       <script>
         document.querySelector('#video-screen').addEventListener('click', function () {
           var v = document.querySelector('#vid');
@@ -107,8 +138,9 @@
         });
       </script>
 
-      <!-- PASSO 5 — CUBO: hover muda a SUA cor, click muda a cor da ESFERA -->
+      <!-- CUBO: hover muda a SUA cor, click muda a cor da ESFERA -->
       <a-box
+        id="cubo"
         class="clickable"
         position="-6 0.7 -6"
         rotation="0 30 0"
@@ -121,7 +153,7 @@
                    loop: true; dur: 8000; easing: linear"
       ></a-box>
 
-      <!-- PASSO 6 — ESFERA: hover muda cor, click mostra o texto flutuante -->
+      <!-- ESFERA: hover muda cor, click mostra o texto flutuante -->
       <a-sphere
         id="esfera"
         class="clickable"
@@ -133,20 +165,20 @@
         event-set__show="_event: click; _target: #info-text; visible: true"
       ></a-sphere>
 
-      <!-- PASSO 6 — TEXTO FLUTUANTE: escondido, aparece ao clicar na esfera -->
+      <!-- TEXTO FLUTUANTE: escondido, aparece ao clicar na esfera -->
       <a-entity
         id="info-text"
         class="clickable"
         position="-8 3.5 -2"
         visible="false"
         geometry="primitive: plane; width: 4.5; height: 0.8"
-        material="color: #000000; opacity: 0.6; shader: flat"
+        material="color: #000000; opacity: 0.6; shader: flat; side: double"
         text="value: Bem-vindos a VR Medicina!; align: center;
               color: #FFFFFF; width: 5"
         event-set__hide="_event: click; visible: false"
       ></a-entity>
 
-      <!-- PASSO 7 — CILINDRO: hover muda cor, click move para nova posição -->
+      <!-- CILINDRO: hover muda cor, click move para nova posição -->
       <a-cylinder
         id="cilindro"
         class="clickable"
@@ -161,22 +193,38 @@
                          easing: easeOutBack"
       ></a-cylinder>
 
-      <!-- PASSO 7 — CONE: roda continuamente -->
-      <a-cone
+      <!-- GRAVIDADE: clique na bola e ela cai com física REAL!
+           event-set__click adiciona dynamic-body no momento do clique.
+           Antes do clique: bola flutua. Depois: gravidade real!-->
+      <a-sphere
+        id="gravity-ball"
         class="clickable"
-        position="6 1 -6"
-        radius-bottom="0.6"
-        radius-top="0"
-        height="1.5"
-        color="#2ECC71"
-        event-set__enter="_event: mouseenter; material.color: #27AE60"
-        event-set__leave="_event: mouseleave; material.color: #2ECC71"
-        animation="property: rotation; to: 0 360 0;
-                   loop: true; dur: 6000; easing: linear"
-      ></a-cone>
+        position="3 5 -3"
+        radius="0.5"
+        color="#F39C12"
+        event-set__enter="_event: mouseenter; material.color: #E67E22"
+        event-set__leave="_event: mouseleave; material.color: #F39C12"
+      ></a-sphere>
 
-      <!-- PASSO 7 — TORUS: anel que roda em dois eixos ao mesmo tempo -->
+      <script>
+        document.querySelector('#gravity-ball').addEventListener('click', function () {
+          this.setAttribute('dynamic-body', 'mass: 1');
+        });
+      </script>
+
+
+      <!-- Label Gravidade -->
+      <a-entity
+        id="label-gravidade"
+        text="value: Clique na bola para ativar gravidade!; align: center; color: #FFFFFF; width: 6"
+        position="3 6.2 -3"
+        geometry="primitive: plane; width: 4.5; height: 0.6"
+        material="color: #333333; opacity: 0.75; shader: flat; side: double"
+      ></a-entity>
+
+      <!-- TORUS: anel que roda em dois eixos ao mesmo tempo -->
       <a-torus
+        id="torus"
         class="clickable"
         position="8 1.5 -2"
         radius="0.7"
@@ -188,8 +236,9 @@
                    loop: true; dur: 10000; easing: linear"
       ></a-torus>
 
-      <!-- PASSO 7 — DODECAEDRO: duas animações em simultâneo (spin + bounce) -->
+      <!-- Duas animações em simultâneo (spin + bounce) -->
       <a-dodecahedron
+        id="dodecaedro"
         class="clickable"
         position="6 1.2 3"
         radius="0.6"
@@ -203,31 +252,32 @@
                            easing: easeInOutQuad"
       ></a-dodecahedron>
 
-      <!-- PASSO 8 — LABEL "Heart": aparece ao apontar para o coração -->
+      <!-- LABEL "Heart": aparece ao apontar para o coração -->
       <a-entity
         id="heart-label"
         text="value: Heart; align: center; color: #FFFFFF; width: 4"
-        position="0 2.8 -2"
+        position="0.697 2.8 -5.38"
         visible="false"
       ></a-entity>
 
-      <!-- PASSO 8 — HITBOX INVISÍVEL: esfera simples para otimização VR -->
+      <!-- HITBOX INVISÍVEL: esfera simples para otimização VR -->
       <a-sphere
+        id="heart-hitbox"
         class="clickable"
-        position="0 1.5 -2"
+        position="0.697 1.5 -5.38"
         radius="0.9"
         material="opacity: 0; transparent: true"
         event-set__enter="_event: mouseenter; _target: #heart-label; visible: true"
         event-set__leave="_event: mouseleave; _target: #heart-label; visible: false"
       ></a-sphere>
 
-      <!-- PASSO 8 — CORAÇÃO 3D: modelo OBJ, roda + pulsa (hitbox trata da interação) -->
+      <!-- CORAÇÃO 3D: modelo OBJ, roda + pulsa (hitbox trata da interação) -->
       <a-entity
         id="heart"
         obj-model="obj: #heart-obj; mtl: #heart-mtl"
         material="side: double"
-        position="0 1.5 -2"
-        rotation="0 180 0"
+        position="0.697 1.5 -5.38"
+        rotation="0 295.5 0"
         scale="0.12 0.12 0.12"
         animation="property: rotation; to: 0 540 0;
                    loop: true; dur: 12000; easing: linear"
@@ -236,12 +286,34 @@
                           easing: easeInOutSine"
       ></a-entity>
 
-      <!-- PASSO 9 — RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->
+      <!-- GAUSSIAN SPLATTING: modelo 3DGS capturado por fotogrametria.
+           Ao contrário de OBJ (faces/polígonos), Gaussian Splatting usa milhares de "splats"
+           (elipses 3D com cor e transparência) para criar imagens foto-realistas.
+           O ficheiro .ply contém a posição, escala, rotação e cor de cada splat. -->
+      <a-entity
+        id="gaussian-splat"
+        gaussian_splatting="src: assets/splats/3DGS.ply;"
+        position="6.638 1.795 -6.616"
+        rotation="0 25.17 0"
+        scale="2.5 2.5 2.5"
+      ></a-entity>
+      <!-- Label Gaussian Splatting -->
+      <a-entity
+        id="label-splat"
+        text="value: Gaussian Splatting (3DGS); align: center; color: #FFFFFF; width: 6"
+        position="7.577 3.429 -7.449"
+        geometry="primitive: plane; width: 4.5; height: 0.6"
+        material="color: #333333; opacity: 0.75; shader: flat; side: double"
+      ></a-entity>
+
+      <!-- RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->
       <a-entity id="rig" movement-controls="fly: false" position="0 0 0">
         <!-- CÂMARA: os nossos "olhos" no mundo 3D -->
-        <a-entity camera look-controls position="0 1.6 0">
+        <a-entity id="camera" camera look-controls position="0 1.6 0">
           <!-- RETÍCULO: o círculo/ponteiro no centro do ecrã -->
+            <!-- Ray casting é ato de lançar um raio a partir de uma origem numa direção para ver se ele intersecta algum objeto-->
           <a-entity
+            id="reticulo"
             cursor="fuse: true; fuseTimeout: 1500"
             raycaster="objects: .clickable; interval: 100"
             position="0 0 -1"
@@ -258,7 +330,7 @@
 
     </a-scene>
 
-    <!-- PASSO 10 — OVERLAY: caixa de instruções visível no ecrã -->
+    <!-- OVERLAY: caixa de instruções visível no ecrã -->
     <div id="overlay">
       <h3>Instruções</h3>
       <ul>
@@ -267,9 +339,8 @@
       </ul>
       <h3>Zonas</h3>
       <ul>
-        <li><b>Frente:</b> Modelos Médicos (coração 3D)</li>
-        <li><b>Esquerda:</b> Clique para Interagir (cubo, esfera, cilindro)</li>
-        <li><b>Direita:</b> Passe o Mouse / Olhe (cone, torus, dodecaedro)</li>
+        <li><b>Esquerda:</b> Clique para Interagir</li>
+        <li><b>Atrás:</b> Gravidade (clique na bola laranja)</li>
       </ul>
     </div>
 
