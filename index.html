@@ -50,7 +50,7 @@
     <!-- id="" a TODOS os objetos! Sem id, aparecem como "a-entity" genérico
          no Inspector (Ctrl+Alt+I) e não se consegue distinguir. -->
     <a-scene physics="gravity: -9.8; restitution: 0.5"
-             renderer="antialias: true; pixelRatio: window.devicePixelRatio">
+             renderer="antialias: true; pixelRatio: 2">
 
       <!-- ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
       <a-assets>
@@ -330,6 +330,13 @@
       </a-entity>
 
     </a-scene>
+
+    <!-- Restaurar resolução: o Gaussian Splatting pode baixar o pixelRatio -->
+    <script>
+      document.querySelector('a-scene').addEventListener('loaded', function () {
+        this.renderer.setPixelRatio(2);
+      });
+    </script>
 
     <!-- OVERLAY: caixa de instruções visível no ecrã -->
     <div id="overlay">
