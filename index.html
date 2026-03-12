@@ -16,10 +16,6 @@
          - dynamic-body="mass: 1" em QUALQUER objeto para ele cair!
          EXERCÍCIO: adiciona dynamic-body a outros objetos! -->
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.4/dist/aframe-physics-system.min.js"></script>
-    <!-- Gaussian Splatting: renderiza ficheiros .ply capturados com fotogrametria 3DGS.
-         Cada "splat" é uma nuvem de pontos 3D com cor e transparência,
-         que juntos formam uma cena foto-realista. -->
-    <script src="https://quadjr.github.io/aframe-gaussian-splatting/index.js"></script>
     <style>
       /* CSS: define a aparência da caixa de instruções (PASSO 10) */
       #overlay {
@@ -49,8 +45,7 @@
          physics: ativa gravidade (0.5 = ressalta 50%) -->
     <!-- id="" a TODOS os objetos! Sem id, aparecem como "a-entity" genérico
          no Inspector (Ctrl+Alt+I) e não se consegue distinguir. -->
-    <a-scene physics="gravity: -9.8; restitution: 0.5"
-             renderer="antialias: true; pixelRatio: 2">
+    <a-scene physics="gravity: -9.8; restitution: 0.5">
 
       <!-- ASSETS: armazém de ficheiros (carregam antes da cena aparecer) -->
       <a-assets>
@@ -287,26 +282,6 @@
                           easing: easeInOutSine"
       ></a-entity>
 
-      <!-- GAUSSIAN SPLATTING: modelo 3DGS capturado por fotogrametria.
-           Ao contrário de OBJ (faces/polígonos), Gaussian Splatting usa milhares de "splats"
-           (elipses 3D com cor e transparência) para criar imagens foto-realistas.
-           O ficheiro .ply contém a posição, escala, rotação e cor de cada splat. -->
-      <a-entity
-        id="gaussian-splat"
-        gaussian_splatting="src: assets/splats/3DGS.ply;"
-        position="6.638 1.795 -6.616"
-        rotation="0 25.17 0"
-        scale="2.5 2.5 2.5"
-      ></a-entity>
-      <!-- Label Gaussian Splatting -->
-      <a-entity
-        id="label-splat"
-        text="value: Gaussian Splatting (3DGS); align: center; color: #FFFFFF; width: 6"
-        position="7.577 3.429 -7.449"
-        geometry="primitive: plane; width: 4.5; height: 0.6"
-        material="color: #333333; opacity: 0.75; shader: flat; side: double"
-      ></a-entity>
-
       <!-- RIG: entidade-pai que se move (WASD no PC, thumbstick em VR) -->
       <a-entity id="rig" movement-controls="fly: false" position="0 0 0">
         <!-- CÂMARA: os nossos "olhos" no mundo 3D -->
@@ -330,13 +305,6 @@
       </a-entity>
 
     </a-scene>
-
-    <!-- Restaurar resolução: o Gaussian Splatting pode baixar o pixelRatio -->
-    <script>
-      document.querySelector('a-scene').addEventListener('loaded', function () {
-        this.renderer.setPixelRatio(2);
-      });
-    </script>
 
     <!-- OVERLAY: caixa de instruções visível no ecrã -->
     <div id="overlay">
